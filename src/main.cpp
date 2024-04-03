@@ -4,8 +4,11 @@
 #include "hardware.hpp"
 #include "wifi-info.hpp"
 #include "timer.hpp"
+#include "menu.hpp"
 
 #include "matrix-pattern.hpp"
+
+int selectedPage = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -28,18 +31,37 @@ void setup() {
   
   WiFi.disconnect(true);  // disconnect from wifi after obtaining time
   WiFi.mode(WIFI_OFF);    // turn off wifi
-
 }
 
 void loop() {
-  readIMUData();
-  checkRotation();
+  selectedPage = menuOptionsRender(mainMenu, selectedPage, 5);  // 0-5, 5 is the max page number
+  Serial.println("Selected " + String(selectedPage));
+  // doubleBeep();
 
-  getTime();
-
-  static int count = 0;
-  ledPrintByte(numbers[count]);
-
-  count = (count + 1) % 101;
-  delay(200);
+  // Enter the selected menu's function
+  switch(selectedPage) {
+    case 0:
+      // function 0
+      ntpClock();
+      break;
+    case 1:
+      // function 1
+      break;
+    case 2:
+      // function 2
+      break;
+    case 3:
+      // function 3
+      break;
+    case 4:
+      // function 4
+      break;
+    case 5:
+      // function 5
+      break;
+    default:
+      break;
+  }
+  delay(250);
+  
 }

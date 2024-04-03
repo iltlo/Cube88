@@ -6,3 +6,5 @@ extern int minute;
 void initClock();
 
 void getTime();
+
+void ntpClock();

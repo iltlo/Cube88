@@ -91,10 +91,10 @@ uint_fast8_t checkRotation() {
   updateIMUData();
 
   if (g.gyro.z > 4) {
-    Serial.println("Rotated clockwise");
+    Serial.println("Rotated right");
     return CMD_RIGHT;
   } else if (g.gyro.z < -4) {
-    Serial.println("Rotated counter-clockwise");
+    Serial.println("Rotated left");
     return CMD_LEFT;
   } else if (g.gyro.y > 4) {
     Serial.println("Rotated up");
