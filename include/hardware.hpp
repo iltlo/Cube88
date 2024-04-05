@@ -3,6 +3,10 @@
 #include <Adafruit_MPU6050.h>
 #include <LedControl.h>
 
+// Device hardware configuration
+const boolean isDebug = false;
+const boolean isSilent = false;
+
 const int buzzerPin = 10;
 
 extern LedControl lc;
@@ -24,6 +28,7 @@ void readIMUData();
 
 uint_fast8_t checkTilt();       // uses accelerometer data to check tilt
 uint_fast8_t checkRotation();   // uses gyro data to check rotation
-
+boolean isShaking();           // uses accelerometer data to check shaking
 
 void ledPrintByte(const byte pattern[]);
+void ledClear();

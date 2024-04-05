@@ -22,7 +22,7 @@ void scrollingAnimation(const byte SRC[8], const byte DEST[8], boolean rightScro
     delay(25);
     byte menuWindow[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   }
-  delay(200);
+  // delay(200);
 }
 
 // general function for showing menu options
@@ -40,12 +40,13 @@ int menuOptionsRender(const byte menu[][8], int selectedPage, int maxMenuPageNum
     if (direction == CMD_RIGHT || direction == CMD_LEFT) {
       destPageNum = (direction == CMD_RIGHT) ? (curPageNum + 1) % (maxMenuPageNum + 1) : 
                                     (curPageNum == 0) ? maxMenuPageNum : curPageNum - 1;
-      Serial.println("curPageNum: " + String(curPageNum) + ", destPageNum: " + String(destPageNum) + ", Max: " + String(maxMenuPageNum));
+      if (isDebug) Serial.println("curPageNum: " + String(curPageNum) + ", destPageNum: " + String(destPageNum) + ", Max: " + String(maxMenuPageNum));
       rightScrolling = (direction == CMD_RIGHT);
-      // beep();
+      beep();
 
       DEST_MENU = menu[destPageNum];
       scrollingAnimation(SRC_MENU, DEST_MENU, rightScrolling);
+      delay(150);
 
       SRC_MENU = DEST_MENU;
       curPageNum = destPageNum;
@@ -55,5 +56,10 @@ int menuOptionsRender(const byte menu[][8], int selectedPage, int maxMenuPageNum
     if (direction == CMD_UP) {
       return curPageNum;
     }
+
+    if (isShaking()) {
+      return -1;
+    }
   }
+  delay(150);
 }

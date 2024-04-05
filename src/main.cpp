@@ -8,37 +8,9 @@
 
 #include "matrix-pattern.hpp"
 
-int selectedPage = 0;
+int prevPage = 0, selectedPage = 0;
 
-void setup() {
-  Serial.begin(115200);
-  initHardware();
-
-  WiFi.begin(ssid, password);
-  // connect to wifi, only wait for 5 seconds
-  Serial.print("Connecting to WiFi");
-  for (int i = 0; i < 5; i++) {
-    Serial.print(".");
-    if (WiFi.status() == WL_CONNECTED) {
-      Serial.print("\nConnected to the WiFi network");
-      break;
-    }
-    delay(1000);
-  }
-  Serial.println();
-
-  initClock();
-  
-  WiFi.disconnect(true);  // disconnect from wifi after obtaining time
-  WiFi.mode(WIFI_OFF);    // turn off wifi
-}
-
-void loop() {
-  selectedPage = menuOptionsRender(mainMenu, selectedPage, 5);  // 0-5, 5 is the max page number
-  Serial.println("Selected " + String(selectedPage));
-  // doubleBeep();
-
-  // Enter the selected menu's function
+void chooseMenuOption(int selectedPage) {
   switch(selectedPage) {
     case 0:
       // function 0
@@ -46,6 +18,7 @@ void loop() {
       break;
     case 1:
       // function 1
+      showTimerMenu();
       break;
     case 2:
       // function 2
@@ -61,6 +34,46 @@ void loop() {
       break;
     default:
       break;
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  initHardware();
+
+  WiFi.begin(ssid, password);
+  // connect to wifi, only wait for 5 seconds
+  if (isDebug) Serial.print("Connecting to WiFi");
+  for (int i = 0; i < 5; i++) {
+    if (isDebug) Serial.print(".");
+    if (WiFi.status() == WL_CONNECTED) {
+      if (isDebug) Serial.print("\nConnected to the WiFi network");
+      break;
+    }
+    delay(1000);
+  }
+  if (isDebug) Serial.println();
+
+  initClock();
+  
+  WiFi.disconnect(true);  // disconnect from wifi after obtaining time
+  WiFi.mode(WIFI_OFF);    // turn off wifi
+
+  initTimerMenu();
+}
+
+void loop() {
+  prevPage = selectedPage;
+  selectedPage = menuOptionsRender(mainMenu, selectedPage, mainMenuSize-1);  // 0-5, 5 is the max page number
+
+  if (selectedPage != -1) {
+    if (isDebug) Serial.println("Selected " + String(selectedPage));
+    doubleBeep();
+
+    // Enter the selected menu's function
+    chooseMenuOption(selectedPage);
+  } else {
+    selectedPage = prevPage;
   }
   delay(250);
   
