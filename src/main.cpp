@@ -8,6 +8,8 @@
 
 #include "matrix-pattern.hpp"
 
+boolean isSilent = false;
+
 int prevPage = 0, selectedPage = 0;
 
 void chooseMenuOption(int selectedPage) {
@@ -22,15 +24,21 @@ void chooseMenuOption(int selectedPage) {
       break;
     case 2:
       // function 2
+      // rollDice();
       break;
     case 3:
       // function 3
+      isSilent = !isSilent;
+      if (isDebug) Serial.println("Silent mode: " + isSilent ? "ON" : "OFF");
       break;
     case 4:
       // function 4
       break;
     case 5:
       // function 5
+      break;
+    case 6:
+      // function 6
       break;
     default:
       break;

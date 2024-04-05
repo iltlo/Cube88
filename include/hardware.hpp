@@ -5,7 +5,7 @@
 
 // Device hardware configuration
 const boolean isDebug = false;
-const boolean isSilent = false;
+extern boolean isSilent;
 
 const int buzzerPin = 10;
 
