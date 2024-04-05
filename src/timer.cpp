@@ -92,8 +92,7 @@ void countDownTimer(int timerMinutes) {
   // Set the timer to count down from the given seconds
   timerAlarmWrite(timer0, 1000000, true);
   timerAlarmEnable(timer0);
-  byte emptyLED[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
+  
   int minutesLeft = 0, secondsLeft = 0;
 
   while (timerInterrupt < timerMinutes * 60) {
