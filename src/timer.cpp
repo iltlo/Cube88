@@ -94,37 +94,46 @@ void countDownTimer(int timerMinutes) {
   timerAlarmEnable(timer0);
   
   int minutesLeft = 0, secondsLeft = 0;
+  int displayedMinute = 0, displayedSecond = 0;
 
   while (timerInterrupt < timerMinutes * 60) {
     // alarm has not been triggered
 
-    if (isDebug) Serial.println("Countdown: " + String(timerInterrupt));
+    // if (isDebug) Serial.println("Countdown: " + String(timerInterrupt));
     minutesLeft = (timerMinutes * 60 - timerInterrupt) / 60;
     secondsLeft = (timerMinutes * 60 - timerInterrupt) % 60;
+
+    if (isDebug) Serial.println("Minutes left: " + String(minutesLeft) + " Seconds left: " + String(secondsLeft));
     
-    // TODO: update remaining time display mechanism
     if (minutesLeft == 0) {
+      if (displayedSecond == secondsLeft) {
+        continue;
+      }
       scrollingAnimation(emptyLED, numbers[secondsLeft], 1);
       delay(350);
       scrollingAnimation(numbers[secondsLeft], emptyLED, 0);
-      // delay(100);
     } else {
-      scrollingAnimation(emptyLED, numbers[minutesLeft], 1);
-      delay(300);
-      scrollingAnimation(numbers[minutesLeft], colon, 1);
-      delay(100);
-      scrollingAnimation(colon, numbers[secondsLeft], 1);
-      delay(300);
-      scrollingAnimation(numbers[secondsLeft], emptyLED, 0);
-      delay(300);
+      // Flashes the remaining time every minute
+      if (secondsLeft % 59 == 0 && secondsLeft != 0) {
+        scrollingAnimation(emptyLED, numbers[minutesLeft], 1);
+        delay(1000);
+        scrollingAnimation(numbers[minutesLeft], emptyLED, 0);
+        delay(350);
+      } else {
+        // Light up the corner LED to indicate the timer is running
+        ledPrintByte(cornerLED);
+      }
     }
+
+    displayedMinute = minutesLeft;
+    displayedSecond = secondsLeft;
 
     if (isShaking()) {
       if (isDebug) Serial.println("Timer cancelled");
       break;
     }
 
-    delay(350);
+    delay(100);
   }
 
   // alarm has been triggered or timer has been cancelled

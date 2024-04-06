@@ -41,7 +41,6 @@ void initHardware() {
 
 void beep() {
   if (isSilent) {
-    if (isDebug) Serial.println("Silent mode is on");
     return;
   }
   digitalWrite(buzzerPin, HIGH);
@@ -51,7 +50,6 @@ void beep() {
 
 void doubleBeep() {
   if (isSilent) {
-    if (isDebug) Serial.println("Silent mode is on");
     return;
   }
   beep();

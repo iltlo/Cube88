@@ -74,7 +74,7 @@ void chooseMenuOption(int selectedPage) {
       // Toggle silent mode
       isSilent = !isSilent;
       if (!isSilent) doubleBeep();
-      if (isDebug) Serial.println("Silent mode: " + isSilent ? "ON" : "OFF");
+      if (isDebug) Serial.println("Silent mode: " + String(isSilent));
       break;
     case 5:
       // Reconnect to WiFi and update time
