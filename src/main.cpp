@@ -5,6 +5,7 @@
 #include "wifi-info.hpp"
 #include "timer.hpp"
 #include "menu.hpp"
+#include "snake.hpp"
 
 #include "matrix-pattern.hpp"
 
@@ -15,29 +16,20 @@ int prevPage = 0, selectedPage = 0;
 // Function prototypes
 void chooseMenuOption(int selectedPage);
 void rollDice();
+void connectWiFi();
 
 // Main setup and loop
 void setup() {
   Serial.begin(115200);
   initHardware();
 
-  WiFi.begin(ssid, password);
-  // connect to wifi, only wait for 5 seconds
-  if (isDebug) Serial.print("Connecting to WiFi");
-  for (int i = 0; i < 5; i++) {
-    if (isDebug) Serial.print(".");
-    if (WiFi.status() == WL_CONNECTED) {
-      if (isDebug) Serial.print("\nConnected to the WiFi network");
-      break;
-    }
-    delay(1000);
-  }
-  if (isDebug) Serial.println();
+  connectWiFi();
 
   initClock();
   
   WiFi.disconnect(true);  // disconnect from wifi after obtaining time
   WiFi.mode(WIFI_OFF);    // turn off wifi
+  if (isDebug) Serial.println("Wifi status: " + String(WiFi.status()));
 
   initTimerMenu();
 }
@@ -75,16 +67,17 @@ void chooseMenuOption(int selectedPage) {
       rollDice();
       break;
     case 3:
+      // Snake game
+      snakeGame();
+      break;
+    case 4:
       // Toggle silent mode
       isSilent = !isSilent;
       if (!isSilent) doubleBeep();
       if (isDebug) Serial.println("Silent mode: " + isSilent ? "ON" : "OFF");
       break;
-    case 4:
-      // function 4
-      break;
     case 5:
-      // function 5
+      // Reconnect to WiFi and update time
       break;
     case 6:
       // function 6
@@ -116,4 +109,19 @@ void rollDice() {
     }
   }
   delay(300);
+}
+
+void connectWiFi() {
+  WiFi.begin(ssid, password);
+  // connect to wifi, only wait for 5 seconds
+  if (isDebug) Serial.println("Connecting to WiFi");
+  for (int i = 0; i < 5; i++) {
+    if (isDebug) Serial.print(".");
+    if (WiFi.status() == WL_CONNECTED) {
+      if (isDebug) Serial.println("\nConnected to the WiFi network");
+      if (isDebug) Serial.println("IP address: " + WiFi.localIP().toString());
+      break;
+    }
+    delay(1000);
+  }
 }

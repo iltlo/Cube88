@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#pragma once
 
 extern byte timerMenu[7][8];
 
