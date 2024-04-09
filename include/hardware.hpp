@@ -29,6 +29,7 @@ void readIMUData();
 uint_fast8_t checkTilt();       // uses accelerometer data to check tilt
 uint_fast8_t checkRotation();   // uses gyro data to check rotation
 boolean isShaking();           // uses accelerometer data to check shaking
+boolean isFacingDown();
 
 void ledPrintByte(const byte pattern[]);
 void ledClear();

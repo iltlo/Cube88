@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "hardware.hpp"
+#include "matrix-pattern.hpp"
 
 // general function for scrolling animation
 void scrollingAnimation(const byte SRC[8], const byte DEST[8], boolean rightScrolling) {
@@ -59,6 +60,14 @@ int menuOptionsRender(const byte menu[][8], int selectedPage, int maxMenuPageNum
 
     if (isShaking()) {
       return -1;
+    }
+
+    while (isFacingDown()) {
+      if (isDebug) Serial.println("Going to sleep");
+      ledPrintByte(emptyLED);
+      esp_sleep_enable_timer_wakeup(5 * 1000000); // 5 second
+      esp_light_sleep_start();
+      if (isDebug) Serial.println("Waking up");
     }
   }
   delay(150);

@@ -127,6 +127,15 @@ boolean isShaking() {
   return false;
 }
 
+boolean isFacingDown() {
+  updateIMUData();
+
+  if (a.acceleration.x > 9) {
+    return true;
+  }
+  return false;
+}
+
 
 void ledPrintByte(const byte pattern[]) {
   for (int i = 0; i < 8; i++) {
