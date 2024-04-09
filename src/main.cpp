@@ -32,6 +32,8 @@ void setup() {
   if (isDebug) Serial.println("Wifi status: " + String(WiFi.status()));
 
   initTimerMenu();
+
+  if (isDebug) Serial.println("CPU Frequency: " + String(F_CPU));
 }
 
 void loop() {
@@ -112,6 +114,8 @@ void rollDice() {
 }
 
 void connectWiFi() {
+  WiFi.setTxPower(WIFI_POWER_5dBm);
+
   WiFi.begin(ssid, password);
   // connect to wifi, only wait for 5 seconds
   if (isDebug) Serial.println("Connecting to WiFi");
