@@ -85,6 +85,7 @@ void IRAM_ATTR onTimer0() {
 
 void countDownTimer(int timerMinutes) {
   if (isDebug) Serial.println("Countdown timer started");
+  boolean isCancelled = false;
 
   timer0 = timerBegin(0, 80, true);   // Timer 0 with 80 prescaler (1MHz), auto-reload mode
   timerAttachInterrupt(timer0, &onTimer0, false);  // Attach the ISR to timer 0
@@ -130,6 +131,7 @@ void countDownTimer(int timerMinutes) {
 
     if (isShaking()) {
       if (isDebug) Serial.println("Timer cancelled");
+      isCancelled = true;
       break;
     }
 
@@ -143,9 +145,22 @@ void countDownTimer(int timerMinutes) {
   timerEnd(timer0);
 
   timerInterrupt = 0;
-  doubleBeep();
+  
+  if (!isCancelled) {
+    doubleBeep();
 
+    if (isSilent) {
+      // flash the corner LED to indicate the timer has ended
+      for (int i = 0; i < 3; i++) {
+        ledPrintByte(fullLED);
+        delay(500);
+        ledPrintByte(emptyLED);
+        delay(500);
+      }
+    }
+  }
   if (isDebug) Serial.println("Countdown timer ended");
+  delay(250);
 }
 
 void showTimerMenu() {
