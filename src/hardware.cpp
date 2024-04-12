@@ -3,6 +3,7 @@
 #include <Adafruit_Sensor.h>
 
 #include "hardware.hpp"
+#include "menu.hpp"
 #include "matrix-pattern.hpp"
 
 const int DIN = 6;
@@ -15,6 +16,7 @@ Adafruit_MPU6050 mpu;
 // MPU6050 imuData;
 
 void initHardware() {
+  pinMode(A3, INPUT);
   pinMode(buzzerPin, OUTPUT);
   digitalWrite(buzzerPin, LOW);
   
@@ -145,4 +147,29 @@ void ledPrintByte(const byte pattern[]) {
 
 void ledClear() {
   lc.clearDisplay(0);
+}
+
+float getBatteryLevel() {
+  uint32_t Vbatt = 0;
+  for(int i = 0; i < 16; i++) {
+    Vbatt = Vbatt + analogReadMilliVolts(A3); // ADC with correction   
+  }
+  float Vbattf = 2 * Vbatt / 16 / 1000.0;     // attenuation ratio 1/2, mV --> V
+  if (isDebug) Serial.println(Vbattf, 3);
+
+  return Vbattf;
+}
+
+void showBatteryLevel() {
+  float Vbattf = getBatteryLevel();
+
+  // Compute ratio: 3.3-4.2V --> 0-100%
+  int battLevel = min(max(int((Vbattf - 3.3) / 0.9 * 100), 0), 100);
+  if (isDebug) Serial.println("Battery level: " + String(battLevel) + "%");
+
+  // show on led matrix
+  ledPrintByte(numbers[battLevel]);
+  delay(750);
+  scrollingAnimation(numbers[battLevel], emptyLED, 0);
+  delay(250);
 }

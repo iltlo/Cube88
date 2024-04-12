@@ -5,6 +5,8 @@
 #include "hardware.hpp"
 #include "menu.hpp"
 
+boolean initTimeSuccess = false;
+
 byte timerMenu[7][8];
 
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;   // Define the mutex for the critical section
@@ -27,14 +29,16 @@ void initClock() {
     return;
   }
 
+  initTimeSuccess = true;
+
   if (isDebug) Serial.print("Current time: " + String(asctime(&timeinfo)));
   if (isDebug) Serial.println("Clock initialized");
 }
 
-void getTime() {
+boolean getTime() {
   if (!getLocalTime(&timeinfo)) {
     if (isDebug) Serial.println("Failed to obtain time");
-    return;
+    return false;
   }
 
   if (isDebug) Serial.print("Current time: " + String(asctime(&timeinfo)));
@@ -43,12 +47,21 @@ void getTime() {
   minute = timeinfo.tm_min;
 
   if (isDebug) Serial.println("Hour: " + String(hour) + " Minute: " + String(minute));
+
+  return true;
 }
 
 void ntpClock() {
-  getTime();
-
-  // TODO: Prompt for try again later if failed to obtain time
+  if (!initTimeSuccess || !getTime()) {
+    // Flash the corner LED to indicate the clock is not set
+    for (int i = 0; i < 3; i++) {
+      ledPrintByte(cornerLED);
+      delay(300);
+      ledPrintByte(emptyLED);
+      delay(300);
+    }
+    return;
+  }
 
   byte hourPattern[8] = {0};
   byte minutePattern[8] = {0};

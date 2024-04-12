@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Wifi.h>
+#include <esp_sleep.h>
 
 #include "hardware.hpp"
 #include "wifi-info.hpp"
@@ -22,6 +23,20 @@ void connectWiFi();
 void setup() {
   Serial.begin(115200);
   initHardware();
+
+  if (getBatteryLevel() < 3.0) {
+    // battery is lower than 3.0V, go to deep sleep mode
+    if (isDebug) Serial.println("Battery level is low, going to deep sleep");
+    // Flash the battery icon for 3 seconds
+    for (int i = 0; i < 3; i++) {
+      beep();
+      ledPrintByte(mainMenu[5]);  // battery icon
+      delay(250);
+      ledPrintByte(emptyLED);
+      delay(250);
+    }
+    esp_deep_sleep_start();
+  }
 
   connectWiFi();
 
@@ -50,7 +65,7 @@ void loop() {
     selectedPage = prevPage;
   }
   delay(250);
-  
+
 }
 
 // Function definitions
@@ -79,10 +94,11 @@ void chooseMenuOption(int selectedPage) {
       if (isDebug) Serial.println("Silent mode: " + String(isSilent));
       break;
     case 5:
-      // Reconnect to WiFi and update time
+      // Display battery level
+      showBatteryLevel();
       break;
     case 6:
-      // function 6
+      // Reconnect to WiFi and update time
       break;
     default:
       break;

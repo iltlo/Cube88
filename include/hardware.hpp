@@ -33,3 +33,6 @@ boolean isFacingDown();
 
 void ledPrintByte(const byte pattern[]);
 void ledClear();
+
+float getBatteryLevel();
+void showBatteryLevel();

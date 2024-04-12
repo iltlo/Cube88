@@ -7,7 +7,7 @@ extern int minute;
 
 void initClock();
 
-void getTime();
+boolean getTime();
 
 void ntpClock();
 
