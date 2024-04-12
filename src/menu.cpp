@@ -34,6 +34,10 @@ int menuOptionsRender(const byte menu[][8], int selectedPage, int maxMenuPageNum
   boolean rightScrolling = 1;  // 1 for right, 0 for left
   uint_fast8_t direction;
 
+  long previousMillis = 0;
+  unsigned long currentMillis;
+  boolean startedCounting = false;
+
   while (1) {
     ledPrintByte(SRC_MENU);
     direction = checkRotation();
@@ -62,12 +66,29 @@ int menuOptionsRender(const byte menu[][8], int selectedPage, int maxMenuPageNum
       return -1;
     }
 
-    while (isFacingDown()) {
-      if (isDebug) Serial.println("Going to sleep");
-      ledPrintByte(emptyLED);
-      esp_sleep_enable_timer_wakeup(5 * 1000000); // 5 second
-      esp_light_sleep_start();
-      if (isDebug) Serial.println("Waking up");
+    if (isFacingDown()) {
+      currentMillis = millis();
+      if (currentMillis - previousMillis >= 2000) {   // interval of 2 seconds
+        if (startedCounting) {
+          if (isDebug) Serial.println("Going to sleep");
+          longBeep();
+          ledPrintByte(emptyLED);
+          while (isFacingDown()) {
+            esp_sleep_enable_timer_wakeup(5 * 1000000); // 5 second
+            esp_light_sleep_start();
+
+            if (isDebug) Serial.println("Waking up");
+            if (!isFacingDown()) {
+              startedCounting = false;
+              break;
+            }
+          }
+          doubleBeep();
+        } else {
+          startedCounting = true;
+          previousMillis = currentMillis;
+        }
+      }
     }
   }
   delay(150);

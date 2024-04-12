@@ -22,6 +22,7 @@ void initHardware();
 
 void beep();
 void doubleBeep();
+void longBeep();
 
 void updateIMUData();
 void readIMUData();

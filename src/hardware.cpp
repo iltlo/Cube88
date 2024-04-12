@@ -59,6 +59,15 @@ void doubleBeep() {
   beep();
 }
 
+void longBeep() {
+  if (isSilent) {
+    return;
+  }
+  digitalWrite(buzzerPin, HIGH);
+  delay(200);
+  digitalWrite(buzzerPin, LOW);
+}
+
 
 void updateIMUData() {
   mpu.getEvent(&a, &g, &temp);
