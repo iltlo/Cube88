@@ -27,6 +27,7 @@ void longBeep();
 void updateIMUData();
 void readIMUData();
 
+void printOrientation();    // uses accelerometer data to calculate orientation
 uint_fast8_t checkTilt();       // uses accelerometer data to check tilt
 uint_fast8_t checkRotation();   // uses gyro data to check rotation
 boolean isShaking();           // uses accelerometer data to check shaking

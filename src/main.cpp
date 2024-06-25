@@ -98,7 +98,15 @@ void chooseMenuOption(int selectedPage) {
       showBatteryLevel();
       break;
     case 6:
-      // Reconnect to WiFi and update time
+      // Use serial to print the orientation
+      while (1) {
+        printOrientation();
+        if (isShaking()) {
+          doubleBeep();
+          delay(600);
+          break;
+        }
+      }
       break;
     default:
       break;
@@ -130,7 +138,7 @@ void rollDice() {
 }
 
 void connectWiFi() {
-  WiFi.setTxPower(WIFI_POWER_5dBm);
+  WiFi.setTxPower(WIFI_POWER_MINUS_1dBm);
 
   WiFi.begin(ssid, password);
   // connect to wifi, only wait for 5 seconds

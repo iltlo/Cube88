@@ -24,7 +24,7 @@ void initHardware() {
   lc.setIntensity(0, 0);  // Set the brightness to lowest value
   lc.clearDisplay(0);
 
-  ledPrintByte(smileyFace);
+  ledPrintByte(cornerLED);
 
   // TODO: Add initialization animation
 
@@ -85,6 +85,33 @@ void readIMUData() {
                   + " Y: " + String(g.gyro.y) 
                   + " Z: " + String(g.gyro.z));
   if (isDebug) Serial.println("====================================");
+}
+
+void printOrientation() {
+  updateIMUData();
+
+  float accel_x = a.acceleration.x;
+  float accel_y = a.acceleration.y;
+  float accel_z = a.acceleration.z;
+
+  // calculate pitch and roll
+  float roll = atan2(a.acceleration.y, a.acceleration.z) * 180 / PI;
+  float pitch = atan2(-a.acceleration.x, sqrt(a.acceleration.y * a.acceleration.y + a.acceleration.z * a.acceleration.z)) * 180 / PI;
+
+  roll = atan2(accel_y, accel_z) * 180 / PI;
+  pitch = atan2(-accel_x, sqrt(accel_y * accel_y + accel_z * accel_z)) * 180 / PI;
+  
+  // Adjust pitch and roll if they're over 180 degrees
+  if (pitch > 180) pitch -= 360;
+  if (roll > 180) roll -= 360;
+
+  Serial.print(roll);
+  Serial.print(" ");
+  Serial.print(pitch);
+  Serial.print(" ,-180,180");
+  Serial.println();
+
+  delay(2);
 }
 
 uint_fast8_t checkTilt() {
